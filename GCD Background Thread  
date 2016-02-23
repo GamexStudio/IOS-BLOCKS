@@ -1,0 +1,69 @@
+-(IBAction)buttonTapped:(id)sender;
+-(void)LoadImage;
+-(void)setImage;
+
+
+NSData *imgData;
+NSData *imgData1;
+NSData *imgData2;
+
+
+
+-(IBAction)buttonTapped:(id)sender
+{
+    
+    _actityindicator.hidden = NO;
+    [_actityindicator startAnimating];
+    
+    dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
+    dispatch_async(myQueue, ^{
+        // Perform long running process
+        
+        [self LoadImage];
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Update the UI
+            
+                    [self setImage];
+            
+        });
+    }); 
+
+    
+
+}
+
+
+-(void)LoadImage
+{
+
+    NSURL *imgURL=[NSURL URLWithString:@"https://i.ytimg.com/vi/dnLW40PAjOU/maxresdefault.jpg"];
+    imgData=[NSData dataWithContentsOfURL:imgURL];
+    
+    
+    NSURL *imgURL1=[NSURL URLWithString:@"http://vignette2.wikia.nocookie.net/halo/images/b/be/H4hd_20.jpg/revision/latest?cb=20121004025014"];
+    imgData1=[NSData dataWithContentsOfURL:imgURL1];
+    
+    
+    NSURL *imgURL2=[NSURL URLWithString:@"https://i.ytimg.com/vi/dnLW40PAjOU/maxresdefault.jpg"];
+    imgData2=[NSData dataWithContentsOfURL:imgURL2];
+    
+
+}
+
+
+
+-(void)setImage
+{
+
+    _actityindicator.hidden = YES;
+    
+    _imgTest.image=[UIImage imageWithData:imgData];
+    _imgTest2.image=[UIImage imageWithData:imgData1];
+    _imgTest3.image=[UIImage imageWithData:imgData2];
+    
+    
+
+
+}
