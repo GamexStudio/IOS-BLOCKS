@@ -1,0 +1,74 @@
+  
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    
+    // push notification code
+    
+    
+    if ([application respondsToSelector:@selector(isRegisteredForRemoteNotifications)])
+    {
+        // iOS 8 Notifications
+        
+        // remove comments
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+        
+        [application registerForRemoteNotifications];
+    }
+    else
+    {
+        // iOS < 8 Notifications
+        [application registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound)];
+    }
+    
+    
+    
+    
+    return YES;
+}
+  
+  
+  
+  
+  
+-(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+    
+    
+    
+    [self registerDeviceTokan:deviceToken];
+}
+
+-(void)registerDeviceTokan:(NSData*)deviceToken{
+    
+    
+    NSLog(@"Device Token%@",deviceToken);
+    
+    NSMutableString *string = [[NSMutableString alloc] init ];
+    int length = [deviceToken length];
+    
+    char const *bytes = [deviceToken bytes];
+    
+    for (int i=0; i<length; i++) {
+        
+        [string appendString:[NSString stringWithFormat:@"%2.2hhx",bytes[i]]];
+        
+        
+    }
+}
+
+
+-(void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    NSLog(@"Error in fail to register %@",error);
+}
+
+
+-(void)application:(UIApplication *)app didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    
+    NSMutableDictionary *test = [userInfo objectForKey:@"aps"];
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"mRupee" message:[test objectForKey:@"alert"] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil, nil ];
+    
+    [alert show];
+    
+}
