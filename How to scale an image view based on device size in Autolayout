@@ -1,0 +1,17 @@
+How do you make an image view or button scale based on device size using Auto Layout in Interface Builder
+
+1. add image or button in your main.storyboard. 
+2. Select button or image in your layout.
+3. if you are set image height and width constraint then remove height and width constraint.
+4. Add equal width constraint to your button or image .
+5. Click on equal with constraint for edit constraint.
+6. Now first item should be your image or button and relation should be equal and second item should be superview width,if not then revers
+first and second item .
+7. you have also multiplier box on that window so add value 0.25 (This multiplier value will set 0.25 % width of the button of
+the your device width so if your are running on iphone6 it will take iphone 6 layout width and assing 0.25% width to button and if you are running app on
+ipad so it will take ipad layout screen width and set 0.25% of width to button. )
+8. add also aspect ratio to your button or image.
+
+so after follow these steps your button or image size will increase and decrease as per your device size.we have follow these 
+tutorial for more info follow this video 
+"http://roadfiresoftware.com/2015/04/how-to-scale-an-image-view-based-on-device-size-with-auto-layout-in-interface-builder/"
