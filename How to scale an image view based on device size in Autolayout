@@ -15,3 +15,5 @@ ipad so it will take ipad layout screen width and set 0.25% of width to button. 
 so after follow these steps your button or image size will increase and decrease as per your device size.we have follow these 
 tutorial for more info follow this video 
 "http://roadfiresoftware.com/2015/04/how-to-scale-an-image-view-based-on-device-size-with-auto-layout-in-interface-builder/"
+
+http://stackoverflow.com/questions/29562015/auto-layout-proportionally-scaling-views
