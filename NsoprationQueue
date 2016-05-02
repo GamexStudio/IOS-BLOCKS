@@ -1,0 +1,268 @@
+//
+//  TableViewController.m
+//  Nsopration
+//
+//  Created by Gamex  on 02/05/16.
+//  Copyright © 2016 GameX. All rights reserved.
+//
+
+#import "TableViewController.h"
+#import "WebAdapter.h"
+
+@interface TableViewController ()
+{
+    NSArray *imgePath;
+    NSArray *name;
+    
+    NSOperationQueue *operationQueue ;
+
+}
+
+#define ROOT_URL_POST @"http://103.7.64.68/smservice/api/"
+#define CATEGORY @"Category?"
+
+
+@property (strong, nonatomic) IBOutlet UITableView *mytblview;
+@property(nonatomic,strong)NSOperationQueue *myqueue;
+
+@end
+
+@implementation TableViewController
+
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+ 
+    self.myqueue = [[NSOperationQueue alloc]init];
+
+    operationQueue = [NSOperationQueue new];
+    [self doRegister];
+}
+
+
+-(void)doRegister
+{
+    
+    NSString *URLString = [NSString stringWithFormat:@"%@%@orgID=%@",ROOT_URL_POST,CATEGORY,@"2"];
+    
+    
+    
+    [WebAdapter performHttpRequest:nil uri:URLString completion:^(NSDictionary *dictionary, NSError *error) {
+        
+       
+        
+        if (error) {
+            // ok, handle the error here
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Nsopration" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil, nil];
+            [alert show];
+            
+        }
+        
+        else if([dictionary count] > 0)
+            
+        {
+            
+            imgePath = [dictionary valueForKey:@"CategoryImagePath"];
+            name = [dictionary valueForKey:@"CategoryName"];
+            
+            [_mytblview reloadData];
+            
+            
+            
+//            if ([[dictionary valueForKey:@"responseStatus"] isEqualToString:@"FAILURE"]) {
+//                
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:[dictionary valueForKey:@"responseMsg"] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+//                [alert show];
+//                
+//            }
+//            else
+//            {
+//                
+//              
+//                
+//                
+//            }
+        }
+        else
+        {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please try again!!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+            [alert show];
+            
+            
+        }
+        
+        
+        
+    }];
+    
+    
+    
+}
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+#warning Incomplete implementation, return the number of sections
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+#warning Incomplete implementation, return the number of rows
+    return [name count];
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+      static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+  
+    
+  
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
+    }
+
+    
+    
+    cell.textLabel.text = [name objectAtIndex:indexPath.row];
+    
+    
+    
+    
+    
+    
+    
+    
+//    [self.myqueue addOperationWithBlock:^{
+//        
+//        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[imgePath objectAtIndex:indexPath.row]]]];
+//        
+//        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//           
+//            [_mytblview reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+//            
+//            cell.imageView.image = image;
+//            
+//        }];
+//        
+//        
+//    }];
+//   
+ 
+    
+    
+    
+    
+
+    NSString *imgStr = [imgePath objectAtIndex:indexPath.row];
+   
+   
+   
+    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+        
+        cell.imageView.image = [UIImage imageWithData:[self methodOne:imgStr]];
+        
+       
+
+    
+    }];
+  
+    
+    
+    
+        
+   
+
+    
+   
+
+    [operationQueue addOperation:blockOperation];
+   
+
+  
+    
+      
+    
+    
+    return cell;
+}
+
+- (void) imageDownloaded:(NSNotification *)notification{
+    
+    [self.mytblview reloadData];
+}
+
+
+
+
+-(NSData *)methodOne:(NSString *)imgStr
+{
+    NSLog(@"is testMethodOne running on main thread? ANS - %@",[NSThread isMainThread]? @"YES":@"NO");
+    
+    NSURL *url = [NSURL URLWithString:imgStr];
+    NSData *image = [[NSData alloc] initWithContentsOfURL:url];
+    
+    
+    return image;
+    
+}
+
+
+/*
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+*/
+
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+}
+*/
+
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end
