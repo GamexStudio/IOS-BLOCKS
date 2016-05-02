@@ -1,0 +1,68 @@
+-(void)doRegister
+{
+
+    NSString *URLString = [NSString stringWithFormat:@"%@%@",ROOT_URL_POST,PATIENTREGISTER];
+    
+    [SVProgressHUD show];
+    
+    [WebAdapter performHttpRequest:[self getJsonDict] uri:URLString completion:^(NSDictionary *dictionary, NSError *error) {
+        
+        [SVProgressHUD dismiss];
+        
+        if (error) {
+            // ok, handle the error here
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:Appname message:[error localizedDescription] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil, nil];
+            [alert show];
+            
+        }
+        
+        else if([dictionary count] > 0)
+            
+        {
+            
+            
+            
+            if ([[dictionary valueForKey:@"responseStatus"] isEqualToString:@"FAILURE"]) {
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:Appname message:[dictionary valueForKey:@"responseMsg"] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                [alert show];
+                
+            }
+            else
+            {
+               
+                [User setLoginStatus:YES];
+                
+                [User setUserID:[dictionary valueForKey:@"userID"]];
+                
+                NSData *decode =[Base64 decode:base64String];
+                [User setprofile:decode];
+                
+                [User setFirstName:_txtfullName.text];
+               
+                HomeViewController *homeVC = [self.storyboard
+                                                       instantiateViewControllerWithIdentifier:@"HomeViewController"];
+                
+                
+                
+                [self.navigationController pushViewController:homeVC animated:YES];
+                
+                
+            }
+        }
+        else
+        {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:Appname message:@"Please try again!!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+            [alert show];
+            
+            
+        }
+        
+        
+        
+    }];
+    
+    
+
+}
