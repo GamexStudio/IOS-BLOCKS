@@ -1,0 +1,19 @@
+ NSArray* arrMarkerData = @[@{@"position": [[CLLocation alloc]initWithLatitude:23.022505 longitude:72.5713621]},@{@"position": [[CLLocation alloc]initWithLatitude:21.7644725 longitude:72.1519304]},@{@"position": [[CLLocation alloc] initWithLatitude:23.2156354 longitude:72.6369415]},@{@"position":[[CLLocation alloc] initWithLatitude:22.9250506 longitude:72.9932969]},@{@"position":[[CLLocation alloc] initWithLatitude:21.522184 longitude:70.4578768]}];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.86
+                                                            longitude:151.20
+                                                                 zoom:6];
+    GMSMapView *mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
+    mapView.myLocationEnabled = YES;
+    self.view = mapView;
+    
+    
+    for (NSDictionary* dict in arrMarkerData)
+            {
+                GMSMarker *marker = [[GMSMarker alloc] init];
+                marker.icon = [GMSMarker markerImageWithColor:[UIColor blackColor]];
+                marker.position = [(CLLocation*)dict[@"position"] coordinate];
+                
+                marker.appearAnimation = kGMSMarkerAnimationPop;
+                marker.map = mapView;
+            }
+
