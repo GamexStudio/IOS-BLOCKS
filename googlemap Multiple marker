@@ -1,19 +1,189 @@
- NSArray* arrMarkerData = @[@{@"position": [[CLLocation alloc]initWithLatitude:23.022505 longitude:72.5713621]},@{@"position": [[CLLocation alloc]initWithLatitude:21.7644725 longitude:72.1519304]},@{@"position": [[CLLocation alloc] initWithLatitude:23.2156354 longitude:72.6369415]},@{@"position":[[CLLocation alloc] initWithLatitude:22.9250506 longitude:72.9932969]},@{@"position":[[CLLocation alloc] initWithLatitude:21.522184 longitude:70.4578768]}];
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.86
-                                                            longitude:151.20
+//
+//  ViewController.m
+//  GoogleMap
+
+
+
+
+#import "ViewController.h"
+#import <GoogleMaps/GoogleMaps.h>
+
+@interface ViewController (){
+    GMSMapView *map;
+}
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+    
+    
+    
+  
+
+//    GMSCoordinateBounds *markerBounds = [[GMSCoordinateBounds alloc] initWithPath:path];
+//    GMSCameraUpdate *updatedCamera = [GMSCameraUpdate fitBounds:markerBounds withEdgeInsets:UIEdgeInsetsMake(44, 0, self.view.frame.size.height + 200, 0)];
+//    
+//    [mapView animateWithCameraUpdate:updatedCamera];
+//    
+    
+  
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+
+    [super viewWillAppear:YES];
+    
+    
+    
+    // [self loadView];
+    NSArray* arrMarkerData = @[@{@"position": [[CLLocation alloc]initWithLatitude:23.022505 longitude:72.5713621]},@{@"position": [[CLLocation alloc]initWithLatitude:21.7644725 longitude:72.1519304]},@{@"position": [[CLLocation alloc] initWithLatitude:23.2156354 longitude:72.6369415]},@{@"position":[[CLLocation alloc] initWithLatitude:22.9250506 longitude:72.9932969]},@{@"position":[[CLLocation alloc] initWithLatitude:21.522184 longitude:70.4578768]}];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:23.022505
+                                                            longitude:72.5713621
                                                                  zoom:6];
     GMSMapView *mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
+    map = mapView;
     mapView.myLocationEnabled = YES;
     self.view = mapView;
     
+    GMSMutablePath *path = [GMSMutablePath path];
+    
+    
     
     for (NSDictionary* dict in arrMarkerData)
-            {
-                GMSMarker *marker = [[GMSMarker alloc] init];
-                marker.icon = [GMSMarker markerImageWithColor:[UIColor blackColor]];
-                marker.position = [(CLLocation*)dict[@"position"] coordinate];
-                
-                marker.appearAnimation = kGMSMarkerAnimationPop;
-                marker.map = mapView;
-            }
+    {
+        GMSMarker *marker = [[GMSMarker alloc] init];
+        marker.icon = [GMSMarker markerImageWithColor:[UIColor blackColor]];
+        marker.position = [(CLLocation*)dict[@"position"] coordinate];
+        
+        marker.appearAnimation = kGMSMarkerAnimationPop;
+        marker.map = mapView;
+        
+        [path addCoordinate: marker.position];
+        
+    }
+    
+    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithPath:path];
+    [mapView animateWithCameraUpdate:[GMSCameraUpdate fitBounds:bounds]];
+    [mapView moveCamera: [GMSCameraUpdate fitBounds:bounds]];
+    GMSCameraUpdate *update = [GMSCameraUpdate zoomTo:8.0];
+    [mapView animateWithCameraUpdate:update];
+    
 
+}
+
+-(void)setMarkerOnPosition :(GMSCoordinateBounds *)bounds
+{
+//    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:23.022505
+//                                                            longitude:72.5713621
+//                                                                 zoom:6];
+//    [map setCamera:camera];
+//
+    
+    [map moveCamera:[GMSCameraUpdate fitBounds:bounds]];
+}
+
+
+-(void)loadView{
+    
+    GMSMapView *mapView = [GMSMapView mapWithFrame:CGRectZero camera:nil];
+    mapView.myLocationEnabled = YES;
+    self.view = mapView;
+
+    
+    NSMutableArray *array = [[NSMutableArray alloc]initWithObjects:[[NSDictionary alloc]initWithObjectsAndKeys:@"44.66",@"latitude",@"21.33",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.66",@"latitude",@"21.453",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.44",@"latitude",@"21.993",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.635",@"latitude",@"21.553",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.3546",@"latitude",@"21.663",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.6643",@"latitude",@"21.212",@"longitude", nil],
+                             [[NSDictionary alloc]initWithObjectsAndKeys:@"44.63466",@"latitude",@"21.3523",@"longitude", nil],nil];
+    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] init];
+    CLLocationCoordinate2D location;
+    for (NSDictionary *dictionary in array)
+    {
+        location.latitude = [dictionary[@"latitude"] floatValue];
+        location.longitude = [dictionary[@"longitude"] floatValue];
+        // Creates a marker in the center of the map.
+        GMSMarker *marker = [[GMSMarker alloc] init];
+        marker.icon = [UIImage imageNamed:(@"marker.png")];
+        marker.position = CLLocationCoordinate2DMake(location.latitude, location.longitude);
+        bounds = [bounds includingCoordinate:marker.position];
+        marker.title = dictionary[@"type"];
+        marker.map = mapView;
+    }
+    [mapView animateWithCameraUpdate:[GMSCameraUpdate fitBounds:bounds withPadding:100.0f]];
+
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+- (IBAction)rightBtnClicked:(id)sender {
+   
+   // CLLocationCoordinate2D locationVal = CLLocationCoordinate2DMake(23.022505, 72.5713621);
+   //  GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] init];
+   // bounds = [bounds includingCoordinate:locationVal];
+    
+   // [self setMarkerOnPosition:bounds];
+    
+    
+    
+    CLLocationCoordinate2D selectedLocation = CLLocationCoordinate2DMake(23.022505, 72.5713621);
+//    
+//    GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:selectedLocation zoom:10];
+//    [map animateWithCameraUpdate:updatedCamera];
+
+    [self setZoomOnLocation:selectedLocation];
+    
+}
+
+
+- (IBAction)leftBtnClicked:(id)sender {
+    
+    
+    CLLocationCoordinate2D selectedLocation = CLLocationCoordinate2DMake(22.9250506, 72.9932969);
+
+    
+    [self setZoomOnLocation:selectedLocation];
+
+}
+
+
+-(void)setZoomOnLocation:(CLLocationCoordinate2D)selectedLocation
+{
+
+   
+   
+    GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:selectedLocation zoom:10];
+    
+    [map animateWithCameraUpdate:updatedCamera];
+
+
+
+
+//    [CATransaction begin];
+//    [CATransaction setValue:[NSNumber numberWithFloat: 1.0f] forKey:kCATransactionAnimationDuration];
+//    
+//    [CATransaction setCompletionBlock:^{
+//        // ... whatever you want to do when the animation is complete
+//    }];
+//    
+//    [map animateToCameraPosition:[GMSCameraPosition
+//                                                  cameraWithLatitude:selectedLocation.latitude
+//                                                  longitude:selectedLocation.longitude
+//                                                  zoom:10.0f]];
+//    
+//    [CATransaction commit];
+
+
+}
+
+@end
