@@ -85,3 +85,46 @@
     [alert show];
     
 }
+
++ (User *)loggedInUser {
+    return (User *)[NSStandardUserDefaults loadCustomObjectWithKey:kUserId];
+}
+
+- (void)save {
+    [NSStandardUserDefaults saveCustomObject:self key:kUserId];
+    [NSStandardUserDefaults synchronize];
+}
+
+- (void)remove {
+    [NSStandardUserDefaults removeObjectForKey:kUserId];
+    [NSStandardUserDefaults synchronize];
+}
+
+
+#pragma mark - Top Navigation Bar
+-(void)addNavigatioinBarview
+{
+    
+    [self.view addSubview:({
+        topView = [TopNavBarView getTopNavBarView];
+        
+        [topView.lblTitle setHidden:YES];
+        [topView.userDetails setHidden:YES];
+        [topView.lblUserLetterImage setHidden:NO];
+        
+        [topView.lblnavTitle setText:@“as”];
+        //        [topView setLayoutForCenterTitle];
+        [topView setLeftBarButtons:[self leftButtons]];
+        [topView setRightBarButtons:[self rightButtons]];
+        topView.view;
+    })];
+    
+}
+
+- (NSMutableArray *) leftButtons {
+    NSMutableArray *arrLeftButtons = [[NSMutableArray alloc] init];
+    [arrLeftButtons addBarButtonWithTintColor:[UIColor whiteColor] icon:[UIImage imageNamed:@"menu_icon"] target:self selector:@selector(showSideMenu) forControlEvents:UIControlEventTouchUpInside];
+    return arrLeftButtons;
+}
+
+
