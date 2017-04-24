@@ -1,0 +1,98 @@
+#import "ViewController.h"
+#import "AppDelegate.h"
+
+@interface ViewController ()< UISearchBarDelegate, UIGestureRecognizerDelegate>
+{
+    NSMutableArray *arrData;
+//    NSIndexPath *selectedIndex;
+    BOOL isLongPresssed;
+}
+
+@property (weak, nonatomic) IBOutlet UITableView *tblData;
+
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    arrData = [NSMutableArray arrayWithObjects:@"Darshan",@"jack",@"Steave",@"Jobs", nil];
+    isLongPresssed = NO;
+    UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    recognizer.minimumPressDuration = 2.0; //seconds
+    recognizer.delegate = self;
+    [self.tblData addGestureRecognizer:recognizer];
+
+   
+}
+
+-(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer{
+    CGPoint p = [gestureRecognizer locationInView:self.tblData];
+    
+    NSIndexPath *indexPath = [self.tblData indexPathForRowAtPoint:p];
+    if (indexPath == nil) {
+        NSLog(@"long press on table view but not on a row");
+    } else if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        NSLog(@"long press on table view at row %ld", indexPath.row);
+        UITableViewCell *cell = [self.tblData cellForRowAtIndexPath:indexPath];
+        cell.backgroundColor = [UIColor redColor];
+        isLongPresssed = YES;
+    } else {
+        NSLog(@"gestureRecognizer.state = %ld", gestureRecognizer.state);
+    }
+
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [arrData count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *Celliidentifier = @"cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:Celliidentifier forIndexPath:indexPath];
+    
+    UIButton *radioBtn;
+    radioBtn.tag = indexPath.row;
+    radioBtn = (UIButton *)[cell viewWithTag:1];
+    
+    [radioBtn setImage:[UIImage imageNamed:@"ic_radio_button_unchecked"] forState:UIControlStateNormal];
+    [radioBtn setImage:[UIImage imageNamed:@"ic_radio_button_checked"] forState:UIControlStateSelected];
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    if ([indexPath isEqual:appDelegate.selectedIndex]) {
+        radioBtn.selected = YES;
+    } else {
+        radioBtn.selected = NO;
+    }
+    
+    UILabel *lbl;
+    
+    lbl = (UILabel *)[cell viewWithTag:2];
+    lbl.text = [arrData objectAtIndex:indexPath.row];
+    
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+//    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//    appDelegate.selectedIndex = indexPath;
+//    [tableView reloadData];
+    if(isLongPresssed){
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
+}
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+@end
