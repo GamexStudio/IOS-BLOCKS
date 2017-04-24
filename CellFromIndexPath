@@ -1,0 +1,58 @@
+#import "DemoViewController.h"
+#import "TableViewCell.h"
+
+@interface DemoViewController ()<UITableViewDelegate, UITableViewDataSource>
+
+@end
+
+@implementation DemoViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.IBTbl.delegate = self;
+    self.IBTbl.dataSource = self;
+    // Do any additional setup after loading the view.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    TableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    [cell.IBBtnA addTarget:self action:@selector(btnAClicked:) forControlEvents:UIControlEventTouchUpInside];
+    cell.IBBtnA.tag = indexPath.row;
+    [cell.IBBtnB addTarget:self action:@selector(btnBClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.IBBtnB setHidden:YES];
+    
+    return cell;
+    
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 3;
+}
+
+-(void)btnAClicked:(UIButton *)sender{
+    NSIndexPath *indexPath= [NSIndexPath indexPathForRow:sender.tag inSection:0];
+
+    TableViewCell *cell = [self.IBTbl cellForRowAtIndexPath:indexPath];
+    
+    [cell.IBBtnB setHidden:NO];
+}
+
+-(void)btnBClicked:(UIButton *)sender{
+
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    TableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    [cell.IBBtnB setHidden:YES];
+}
+
+@end
