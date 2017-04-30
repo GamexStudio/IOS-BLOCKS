@@ -1,0 +1,75 @@
+import UIKit
+
+class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
+
+    @IBOutlet weak var tblSetting  : UITableView!
+    
+    var arrItems = ["one","two","three","four","five"]
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return arrItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let settingCell = tableView.dequeueReusableCell(withIdentifier: "SettingCell") as! SettingCell
+        
+        settingCell.lblName.text = arrItems[indexPath.row]
+        
+        settingCell.btnSetting.tag = indexPath.row
+        
+        settingCell.btnSetting.addTarget(self, action: #selector(YourMethodName(_:)), for:.touchUpInside)
+
+        return settingCell
+    }
+    
+    func YourMethodName(_ sender : UIButton) {
+        
+        if sender.isSelected{
+            sender.isSelected = false
+        }else{
+            sender.isSelected = true
+        }
+        
+        
+        
+        switch sender.tag {
+        case 0:
+            print("one")
+            
+            break
+        case 1:
+            print("two")
+
+            break
+        case 2:
+            print("three")
+        
+            break
+        case 3:
+            print("four")
+            
+            break
+        case 4:
+            print("five")
+            break
+        default:
+            print("Another")
+            break
+        }
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+
+
+}
+
