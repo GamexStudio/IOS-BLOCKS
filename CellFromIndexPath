@@ -14,7 +14,19 @@
     self.IBTbl.dataSource = self;
     // Do any additional setup after loading the view.
 }
-
+//MARK: -textField Delegate Methods
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("In return")
+        
+        if(textField.text! == " "){
+            textField.text = ""
+        }else{
+            tagListView.addTag(textField.text!)
+        }
+        
+        textField.text = ""
+        return false
+    }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
