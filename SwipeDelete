@@ -1,0 +1,56 @@
+import UIKit
+
+class DishViewController: UIViewController,UITableViewDataSource,UITableViewDelegate , SWTableViewCellDelegate {
+
+    @IBOutlet weak var tblDishList : UITableView!
+    
+    var arrItems = ["salad","iceCream Salad","three","four","five"]
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return arrItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let dishCell = tableView.dequeueReusableCell(withIdentifier: "DishCell") as! DishCell
+        
+        dishCell.lblDishName?.text = arrItems[indexPath.row]
+        dishCell.rightUtilityButtons = rightButtons() as! [Any]
+        dishCell.delegate = self
+        return dishCell
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func rightButtons()-> NSArray{
+        let rightUtilityButtons: NSMutableArray? = []
+        rightUtilityButtons?.sw_addUtilityButton(with: UIColor.red, icon: UIImage(named: "tomato"))
+        
+        return rightUtilityButtons!
+    }
+    
+    //MARK: - SwTableViewCell Delegate Methods
+    func swipeableTableViewCell(_ cell: SWTableViewCell!, didTriggerRightUtilityButtonWith index: Int) {
+        
+        switch index {
+        case 0:
+            print("delete fired")
+            let indexPath = tblDishList.indexPath(for: cell)
+            print("index is  \(indexPath!.row)")
+            break
+        default:
+            print("in default")
+            break
+        }
+    }
+
+}
