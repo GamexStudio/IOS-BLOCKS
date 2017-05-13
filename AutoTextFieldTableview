@@ -1,0 +1,118 @@
+
+
+import UIKit
+
+class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+
+    @IBOutlet weak var IBTblView: UITableView!
+    var arrAutoComplete: [String] = []
+    var resultArray: [String]? = []
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        
+        setupView()
+        arrAutoComplete = ["ces", "asd asd", "mirchi", "spicy", "dhamakedaar", "dabdabaine", "lasaniya bataka", "csed", "ced", "cessssssss"]
+        
+        print("\u{0024}") // $ sign unicode
+        
+      /*  _ = WebClient.requestWithUrl(url:"", parameters: ["user_id":"3"]) { (response, error) in
+                if error == nil {
+                    let dictData = response as! NSDictionary
+                    if let arrData = dictData["data"] as? Array<[String : Any]>{
+                        print("data is\(arrData)")
+                        for dic in arrData{
+                            print("dic val \(dic)")
+                            self.arrAutoComplete.append(dic["tag"] as! String)
+                        }
+                    }
+                }
+                else {
+                    
+                }
+                
+                
+            }*/
+        
+
+        
+    }
+    @IBOutlet weak var IBTextField: UITextField!
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func setupView(){
+        IBTextField.delegate = self
+        
+        IBTblView.delegate = self
+        IBTblView.dataSource = self
+        
+        IBTblView.isHidden = true
+    }
+
+
+    //MARK: - TextField Delegate Methods
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        print(textField.text!)
+        let nsString = textField.text as NSString?
+        let newString = nsString?.replacingCharacters(in: range, with: string)
+        print(newString)
+
+        self.searchString(string: newString!)
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        IBTblView.isHidden = true
+    }
+    
+    //MARK: - TableView Datasource and delegate methods
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
+        cell?.textLabel?.text = resultArray?[indexPath.row]
+        return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let text = resultArray?[indexPath.row]
+        IBTextField.text = text
+        IBTblView.isHidden = true
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return (resultArray?.count)!
+    }
+    
+    //MARK: - Custom Methods
+    
+    func searchString(string: String){
+        print("in search \(string)")
+        if(string.isValid){
+            let predicate = NSPredicate(format: "SELF beginswith[c] %@", string)
+            
+            resultArray = arrAutoComplete.filter { predicate.evaluate(with: $0) }
+            
+            if (resultArray?.count)! > 0{
+                self.IBTblView.isHidden = false
+                self.IBTblView.reloadData()
+            }
+            print("resultArray \(resultArray)")
+        }else{
+            IBTblView.isHidden = true
+        }
+        
+    }
+    
+}
+
