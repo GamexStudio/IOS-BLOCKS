@@ -1,0 +1,27 @@
+
+
+            if(dish.arrCategory.count > 1){
+                if(dish.arrCategory.count > 5){
+                    if !( width*5+(5*5) == Int(cell.categoryCollectionView.frame.size.width))
+                    {
+                        cell.categoryCollectionView.frame.origin.x = cell.categoryCollectionView.frame.origin.x - (cell.categoryCollectionView.frame.size.width * 4) - CGFloat(5*4)
+                        
+                        cell.categoryCollectionView.frame.size.width = cell.categoryCollectionView.frame.size.width * 5 + CGFloat(5*5)
+                    }
+                }else{
+                    print("width  with dish array \(width*dish.arrCategory.count)")
+                    print("total width \(cell.categoryCollectionView.frame.width)")
+                    
+                    if !(width*dish.arrCategory.count+(5*dish.arrCategory.count) == Int(cell.categoryCollectionView.frame.size.width))
+                    {
+                        cell.categoryCollectionView.frame.origin.x = cell.categoryCollectionView.frame.origin.x - (cell.categoryCollectionView.frame.size.width * CGFloat(dish.arrCategory.count-1)) - CGFloat(5*dish.arrCategory.count)
+                        cell.categoryCollectionView.frame.size.width = cell.categoryCollectionView.frame.size.width * CGFloat(dish.arrCategory.count) + CGFloat(5*dish.arrCategory.count)
+                    }
+                    
+                    
+                }
+                
+//                print("collection width \(cell.categoryCollectionView.frame.size.width)")
+                
+                cell.categoryCollectionView.reloadData()
+            }
