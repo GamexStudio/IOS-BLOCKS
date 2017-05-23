@@ -1,0 +1,55 @@
+     var arrCategories: [Categories] = []
+
+    
+    func downloadData(){
+        _ = WebClient.requestWithUrl(url: "", parameters: ["user_id":"2"]) { (response, error) in
+            if error == nil {
+                
+                let dictData = response as! NSDictionary
+                if let arrData : Array = dictData["data"] as? Array<[String : Any]>{
+                    for var dictAttribute in arrData {
+                        self.downloadImage(url: URL(string: dictAttribute["category_image"] as! String)!)
+                        let image_selected = (dictAttribute["category_image"] as! NSString).lastPathComponent
+                        self.downloadImage(url: URL(string: dictAttribute["category_deselect_image"] as! String)!)
+                        let image_deselected = (dictAttribute["category_deselect_image"] as! NSString).lastPathComponent
+                        
+                        dictAttribute["category_image"] = image_selected
+                        dictAttribute["category_deselect_image"] = image_deselected
+                        
+                        let categoryList =  Categories(dict: dictAttribute)
+                        self.arrCategories.append(categoryList)
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    func downloadImage(url: URL) {
+        print("Download Started")
+        let data = try? Data(contentsOf: url)
+        let image = UIImage(data: data!)
+        do{
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = documentsURL.appendingPathComponent(url.lastPathComponent)
+        if let pngImageData = UIImagePNGRepresentation(image!) {
+            try pngImageData.write(to: fileURL, options: .atomic)
+            }
+        }catch{}
+
+    }
+    
+    
+    //viewdidload
+    
+       let catarra = appDelegate.arrCategories[0]
+            print("categories array \(appDelegate.arrCategories[0])")
+            let nsDocumentDirectory = FileManager.SearchPathDirectory.documentDirectory
+            let nsUserDomainMask    = FileManager.SearchPathDomainMask.userDomainMask
+            let paths               = NSSearchPathForDirectoriesInDomains(nsDocumentDirectory, nsUserDomainMask, true)
+            if let dirPath          = paths.first{
+                let imageURL = URL(fileURLWithPath: dirPath).appendingPathComponent(catarra.imageIconName!)
+                print(imageURL)
+                
+            }
+            
