@@ -1,0 +1,128 @@
+import UIKit
+
+class TableViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
+    
+    var arrAdressList                : [AddressList] = []
+    var filterSearch                 : [AddressList] = []
+    var isSearching : Bool = false
+    var arrArea:[String] = []
+    
+    @IBOutlet weak var tblList       :UITableView!
+    
+    @IBOutlet weak var txtSearch     :UITextField!
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        txtSearch.delegate = self
+       getAddress()
+    }
+
+    
+    //MARK: - TableView Datasource and delegate methods
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
+        var address: AddressList!
+        if isSearching{
+            address = filterSearch[indexPath.row]
+        }else{
+            address = arrAdressList[indexPath.row]
+        }
+        
+        cell?.textLabel?.text = address.area
+        return cell!
+    }
+    
+   
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isSearching{
+            return filterSearch.count
+        }else{
+            return arrAdressList.count
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var address: AddressList!
+        if isSearching{
+            address = filterSearch[indexPath.row]
+        }else{
+            address = arrAdressList[indexPath.row]
+        }
+        
+        print("Area is in did select -----------\(address.area! as String)")
+    }
+    
+    
+    // MARK: - webservice
+    
+    func getAddress() {
+        
+        
+        
+        _ = WebClient.requestWithUrl(url: "", parameters: ["user_id":"5"]) { (response, error) in
+            if error == nil {
+                
+                
+                
+                let dictData = response as! NSDictionary
+                if let arrData : Array = dictData["data"] as? Array<[String : Any]>{
+                    
+                    
+                    for dictAttribute in arrData {
+                        let area = dictAttribute["area"];
+                        self.arrArea.append(area as! String)
+                        let addressList =  AddressList(dict: dictAttribute)
+                            self.arrAdressList.append(addressList)
+                    }
+                   
+                    
+                }
+                
+                self.tblList.reloadData()
+               
+               
+            }
+            
+            
+            
+        }
+    }
+
+    
+    
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        var searchString: String?
+        let range2 = textField.text?.rangeFromNSRange(range)
+        searchString = textField.text?.appending(string)
+        searchString  = searchString?.replacingCharacters(in: range2!, with: "")
+        
+        if((searchString?.characters.count)! > 0){
+            isSearching = true
+            
+            let predicate = NSPredicate(format: "SELF.area CONTAINS[cd] %@", searchString!)
+            
+            
+            
+            filterSearch = arrAdressList.filter { predicate.evaluate(with: $0) }
+            
+        }else{
+            isSearching = false
+            
+            filterSearch = arrAdressList
+        }
+        
+        self.tblList.reloadData()
+        
+        return true;
+    }
