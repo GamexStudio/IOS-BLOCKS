@@ -1,0 +1,51 @@
+override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let strUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&type=restaurant&keyword=cruise&key=AIzaSyDKicEUGsTwH-AYHHqMFHZKnhgQ4RO7GIc"
+        
+        Alamofire.request(strUrl).responseJSON { response in
+            print(response)
+            
+            if let jsonResult = response.result.value as? [String:Any]{
+                
+                let returnedPlaces: NSArray? = jsonResult["results"] as? NSArray
+                
+                if returnedPlaces != nil {
+                    
+                    for index in 0..<returnedPlaces!.count {
+                        
+                        if let returnedPlace = returnedPlaces?[index] as? NSDictionary {
+                            
+                            var placeName = ""
+                            var latitude = 0.0
+                            var longitude = 0.0
+                            
+                            if let name = returnedPlace["name"] as? NSString {
+                                placeName = name as String
+                            }
+                            
+                            if let geometry = returnedPlace["geometry"] as? NSDictionary {
+                                if let location = geometry["location"] as? NSDictionary {
+                                    if let lat = location["lat"] as? Double {
+                                        latitude = lat
+                                    }
+                                    
+                                    if let lng = location["lng"] as? Double {
+                                        longitude = lng
+                                    }
+                                }
+                            }
+                            
+
+            }
+            
+            
+
+            
+            }
+        }
+
+
+            }
+        }
+    }
