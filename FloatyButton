@@ -1,0 +1,24 @@
+ func addFloatingButton(to view: UIView, floatingButton: Floaty) {
+        let item = FloatyItem()
+        item.hasShadow = false
+        item.buttonColor = UIColor.blue
+        item.circleShadowColor = UIColor.red
+        item.titleShadowColor = UIColor.blue
+        item.titleLabelPosition = .right
+        item.title = "titlePosition right"
+        item.handler = { item in
+            
+        }
+        
+        floatingButton.hasShadow = false
+        floatingButton.addItem(title: "I got a title")
+        floatingButton.addItem("I got a icon", icon: UIImage(named: "icShare"))
+        floatingButton.addItem(item: item)
+        floatingButton.paddingX = view.frame.width/2 - floatingButton.frame.width/2
+        view.addSubview(floatingButton)
+    }
+    
+    
+    //Viewcontroller
+        var floaty = Floaty()
+  AppUtility.sharedInstance.addFloatingButton(to: self.view, floatingButton: floaty)
